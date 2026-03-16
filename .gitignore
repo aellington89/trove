@@ -1,0 +1,19 @@
+node_modules/
+out/
+dist/
+
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / editor
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code
+.claude/
