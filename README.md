@@ -81,7 +81,7 @@ npm run typecheck      # TypeScript strict mode
 
 ## Changelog
 
-### v0.1.0 (in progress)
+### v0.0.1 (in progress)
 
 Phase 1: Foundation — core shell, database, browsing views, and media type system.
 
