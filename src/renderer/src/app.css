@@ -26,7 +26,8 @@
 /* --- Base Styles ---
    Applied with !important to override Tailwind's preflight which uses
    unresolved --theme() functions in the Electron/Vite build pipeline. */
-html, body {
+html,
+body {
   margin: 0;
   font-family: 'DM Sans', system-ui, sans-serif !important;
   -webkit-font-smoothing: antialiased;
