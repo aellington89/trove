@@ -1,11 +1,5 @@
 import type Database from 'better-sqlite3'
-
-interface FieldDefinition {
-  key: string
-  label: string
-  type: 'text' | 'number' | 'select' | 'combobox'
-  options?: string[]
-}
+import type { FieldDefinition } from '@shared/types'
 
 interface MediaTypeSeed {
   key: string

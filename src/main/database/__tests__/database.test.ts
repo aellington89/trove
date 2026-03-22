@@ -2,11 +2,11 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import Database from 'better-sqlite3'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { mkdtempSync, existsSync, rmSync } from 'fs'
+import { mkdtempSync, rmSync } from 'fs'
 import { ulid } from 'ulid'
 import { runMigrations, getAppliedMigrations, rollbackMigration } from '../migrate'
 import { allMigrations } from '../migrations'
-import { seedBuiltinMediaTypes, builtinMediaTypes } from '../seeds/media-types'
+import { seedBuiltinMediaTypes } from '../seeds/media-types'
 
 let db: Database.Database
 let tmpDir: string
@@ -93,35 +93,24 @@ describe('Items Table Schema', () => {
 
   it('should enforce NOT NULL on required fields', () => {
     expect(() => {
-      db.prepare('INSERT INTO items (id, type, title, date_added, date_modified) VALUES (?, ?, ?, ?, ?)').run(
-        ulid(),
-        'books',
-        'Test Book',
-        new Date().toISOString(),
-        new Date().toISOString(),
-      )
+      db.prepare(
+        'INSERT INTO items (id, type, title, date_added, date_modified) VALUES (?, ?, ?, ?, ?)',
+      ).run(ulid(), 'books', 'Test Book', new Date().toISOString(), new Date().toISOString())
     }).not.toThrow()
 
     expect(() => {
-      db.prepare('INSERT INTO items (id, title, date_added, date_modified) VALUES (?, ?, ?, ?)').run(
-        ulid(),
-        'Test',
-        new Date().toISOString(),
-        new Date().toISOString(),
-      )
+      db.prepare(
+        'INSERT INTO items (id, title, date_added, date_modified) VALUES (?, ?, ?, ?)',
+      ).run(ulid(), 'Test', new Date().toISOString(), new Date().toISOString())
     }).toThrow()
   })
 
   it('should default status to Owned and rating to 0', () => {
     const id = ulid()
     const now = new Date().toISOString()
-    db.prepare('INSERT INTO items (id, type, title, date_added, date_modified) VALUES (?, ?, ?, ?, ?)').run(
-      id,
-      'books',
-      'Test',
-      now,
-      now,
-    )
+    db.prepare(
+      'INSERT INTO items (id, type, title, date_added, date_modified) VALUES (?, ?, ?, ?, ?)',
+    ).run(id, 'books', 'Test', now, now)
 
     const item = db.prepare('SELECT status, rating FROM items WHERE id = ?').get(id) as {
       status: string
@@ -156,7 +145,15 @@ describe('Media Types Table Schema', () => {
     const columns = db.prepare('PRAGMA table_info(media_types)').all() as { name: string }[]
     const colNames = columns.map((c) => c.name)
 
-    expect(colNames).toEqual(['key', 'label', 'icon', 'color', 'fields_schema', 'is_builtin', 'sort_order'])
+    expect(colNames).toEqual([
+      'key',
+      'label',
+      'icon',
+      'color',
+      'fields_schema',
+      'is_builtin',
+      'sort_order',
+    ])
   })
 })
 
@@ -268,7 +265,9 @@ describe('Seed Data', () => {
 
   it('should extract fields_schema via json_extract', () => {
     const result = db
-      .prepare("SELECT json_extract(fields_schema, '$[0].key') as first_key FROM media_types WHERE key = ?")
+      .prepare(
+        "SELECT json_extract(fields_schema, '$[0].key') as first_key FROM media_types WHERE key = ?",
+      )
       .get('books') as { first_key: string }
 
     expect(result.first_key).toBe('author')

@@ -29,7 +29,9 @@ export function runMigrations(db: Database.Database, migrations: Migration[]): v
   ensureMigrationsTable(db)
 
   const applied = new Set(getAppliedMigrations(db))
-  const pending = migrations.filter((m) => !applied.has(m.version)).sort((a, b) => a.version - b.version)
+  const pending = migrations
+    .filter((m) => !applied.has(m.version))
+    .sort((a, b) => a.version - b.version)
 
   for (const migration of pending) {
     const runMigration = db.transaction(() => {

@@ -15,5 +15,5 @@
     "outDir": "./out/tsconfig.web",
     "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
-  "include": ["src/renderer/**/*", "src/preload/index.d.ts"]
+  "include": ["src/renderer/**/*", "src/shared/**/*", "src/preload/index.d.ts"]
 }
