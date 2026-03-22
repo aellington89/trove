@@ -1,6 +1,6 @@
 {
   "name": "trove",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A personal media library manager",
   "type": "module",
   "main": "./out/main/index.js",
@@ -15,19 +15,26 @@
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "better-sqlite3": "^12.8.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "ulid": "^3.0.2",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.1",
     "@tailwindcss/vite": "^4.1.4",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/coverage-v8": "^4.1.0",
     "electron": "^35.2.1",
     "electron-builder": "^26.0.12",
     "electron-vite": "^3.1.0",
@@ -35,10 +42,12 @@
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
+    "happy-dom": "^20.8.4",
     "postcss": "^8.5.8",
     "prettier": "^3.5.3",
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.31.0"
+    "typescript-eslint": "^8.31.0",
+    "vitest": "^4.1.0"
   }
 }
