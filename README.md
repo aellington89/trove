@@ -118,6 +118,7 @@ npm run test:coverage  # Vitest with coverage
 
 Phase 1: Foundation — core shell, database, browsing views, and media type system.
 
+- **Hotfix** (2026-03-22) — Added `.gitattributes` to normalize line endings, fixing phantom CRLF/LF diffs on Windows (#22)
 - **1.3 Data Access Layer** (2026-03-21) — IPC handlers for CRUD operations, typed renderer API, shared TypeScript interfaces, repository pattern with tests
 - **1.2 SQLite Integration** (2026-03-21) — better-sqlite3, migration system, items/media_types schema, 5 built-in media type seeds, Vitest setup
 - **Hotfix** (2026-03-22) — Added `postinstall` script to rebuild `better-sqlite3` against Electron's Node.js headers, fixing NODE_MODULE_VERSION mismatch
