@@ -1,11 +1,13 @@
-import { Search, X, Plus, Sun } from 'lucide-react'
-import { useUIStore } from '../../stores'
+import { Search, X, Plus, Sun, Moon } from 'lucide-react'
+import { useUIStore, useThemeStore } from '../../stores'
 import { ViewToggle } from './ViewToggle'
 import { SortDropdown } from './SortDropdown'
 
 export function TopBar() {
   const searchQuery = useUIStore((s) => s.searchQuery)
   const setSearchQuery = useUIStore((s) => s.setSearchQuery)
+  const theme = useThemeStore((s) => s.theme)
+  const toggleTheme = useThemeStore((s) => s.toggleTheme)
 
   return (
     <header className="flex h-[var(--topbar-height)] shrink-0 items-center gap-3 border-b border-edge bg-surface-primary px-4">
@@ -38,19 +40,20 @@ export function TopBar() {
 
       {/* Add button */}
       <button
-        className="flex h-8 items-center gap-1.5 rounded-lg bg-accent px-3 text-xs font-medium text-white transition-colors hover:bg-accent-hover"
+        className="flex h-8 items-center gap-1.5 rounded-lg bg-accent px-3 text-xs font-medium text-content-inverse transition-colors hover:bg-accent-hover"
         title="Add item"
       >
         <Plus className="h-4 w-4" />
         <span className="hidden sm:inline">Add Item</span>
       </button>
 
-      {/* Theme toggle (no-op until Issue #1.6) */}
+      {/* Theme toggle */}
       <button
+        onClick={toggleTheme}
         className="flex h-8 w-8 items-center justify-center rounded-lg text-content-muted transition-colors hover:text-content-primary"
-        title="Toggle theme"
+        title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
       >
-        <Sun className="h-4 w-4" />
+        {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       </button>
     </header>
   )

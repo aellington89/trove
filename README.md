@@ -53,7 +53,7 @@ src/
     └── src/
         ├── main.tsx               # React entry point + store initialization
         ├── App.tsx                # Root component (renders AppShell)
-        ├── app.css                # Tailwind imports, CSS custom properties, font faces
+        ├── app.css                # Tailwind imports, CSS design tokens (dark/light themes), font faces
         ├── hooks/
         │   └── useMediaQuery.ts   # Responsive breakpoint hook (matchMedia API)
         ├── components/
@@ -72,6 +72,7 @@ src/
             ├── index.ts           # Barrel export for all stores + subscriptions
             ├── items-store.ts     # Items CRUD state + item counts + actions
             ├── media-types-store.ts # Media type list state + lookup helper
+            ├── theme-store.ts     # Theme state + toggle + localStorage persistence
             ├── ui-store.ts        # View, filter, sort, search, sidebar state
             └── subscriptions.ts   # Cross-store wiring (filter changes → refetch)
 ```
@@ -135,8 +136,9 @@ npm run test:coverage  # Vitest with coverage
 
 Phase 1: Foundation — app shell, browsing views, and theming.
 
-### v0.0.3 (in progress)
+### v0.0.3 (In Progress)
 
+- **1.6 Theme System + CSS Variables** (2026-03-28) — Complete CSS custom property system with Dark Vault (charcoal + amber) and Light Archive (warm beige + muted gold) themes, smooth 200ms theme toggle with `prefers-reduced-motion` support, localStorage persistence with no-flash pre-paint script, Zustand theme store with persist middleware, media type signature colors as CSS vars, status/shadow design tokens, Tailwind v4 `@theme` integration for all tokens
 - **1.5 App Shell and Layout** (2026-03-27) — Collapsible sidebar with media type navigation and item counts, top bar with search/view toggles/sort/add controls, responsive auto-collapse at 1280px, dark-first CSS custom property token system, `lucide-react` icons, `countItemsByType` IPC channel, empty and loading states
 
 ### v0.0.2

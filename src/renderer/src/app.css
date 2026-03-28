@@ -2,34 +2,117 @@
 @source "../src/**/*.{tsx,ts}";
 
 /* ─── Design Tokens (CSS Custom Properties) ──────────────────────────────────
-   Dark theme is the default. Issue #1.6 will add [data-theme="light"] overrides.
+   Dark Vault is the default theme (defined on :root).
+   Light Archive overrides via [data-theme="light"].
    All component colors reference these variables — no hardcoded color values. */
 
 :root {
   /* Surface colors */
-  --color-bg-primary: #0a0a0a;
-  --color-bg-secondary: #141414;
-  --color-bg-tertiary: #1e1e1e;
-  --color-bg-active: #262626;
+  --color-bg-primary: #0D0D0F;
+  --color-bg-secondary: #141416;
+  --color-bg-tertiary: #1C1C1F;
+  --color-bg-active: #262628;
+  --color-bg-card: #1C1C1F;
+  --color-bg-modal-overlay: rgba(0, 0, 0, 0.6);
 
   /* Text colors */
-  --color-text-primary: #f5f5f5;
-  --color-text-secondary: #a3a3a3;
-  --color-text-muted: #737373;
+  --color-text-primary: #F5F0E8;
+  --color-text-secondary: #A8A29E;
+  --color-text-muted: #78716C;
+  --color-text-inverse: #0D0D0F;
 
   /* Border colors */
-  --color-border: #262626;
-  --color-border-hover: #404040;
+  --color-border: #262628;
+  --color-border-subtle: #1C1C1F;
+  --color-border-strong: #3F3F43;
 
   /* Accent */
-  --color-accent: #3b82f6;
-  --color-accent-hover: #2563eb;
+  --color-accent: #E8A838;
+  --color-accent-hover: #D4952E;
+  --color-accent-active: #C08524;
+
+  /* Media type signature colors */
+  --color-media-books: #5A8A4C;
+  --color-media-music: #9B6FF6;
+  --color-media-movies: #E03E3E;
+  --color-media-tv: #4080F0;
+  --color-media-games: #22B352;
+
+  /* Status colors */
+  --color-status-success: #22C55E;
+  --color-status-warning: #EAB308;
+  --color-status-error: #EF4444;
+  --color-status-info: #3B82F6;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-hover-lift: 0 4px 12px rgba(0, 0, 0, 0.5);
 
   /* Layout dimensions */
   --sidebar-width-expanded: 240px;
   --sidebar-width-collapsed: 56px;
   --sidebar-transition-duration: 200ms;
   --topbar-height: 56px;
+}
+
+/* ─── Light Archive Theme ──────────────────────────────────────────────────── */
+
+[data-theme="light"] {
+  /* Surface colors — rich wood and worn leather */
+  --color-bg-primary: #E4D5BE;
+  --color-bg-secondary: #D5C3A6;
+  --color-bg-tertiary: #C9B494;
+  --color-bg-active: #BDA683;
+  --color-bg-card: #EDE2D0;
+  --color-bg-modal-overlay: rgba(40, 25, 10, 0.4);
+
+  /* Text colors — espresso and dark leather */
+  --color-text-primary: #1A0F04;
+  --color-text-secondary: #4A3626;
+  --color-text-muted: #7D6B56;
+  --color-text-inverse: #E4D5BE;
+
+  /* Border colors — wood grain */
+  --color-border: #B09A78;
+  --color-border-subtle: #C4AF90;
+  --color-border-strong: #8F7A5A;
+
+  /* Accent — burnished brass */
+  --color-accent: #A67A0A;
+  --color-accent-hover: #8B6608;
+  --color-accent-active: #6F5206;
+
+  /* Media type signature colors — deeper tones for warm backgrounds */
+  --color-media-books: #3D6B2E;
+  --color-media-music: #7C3AED;
+  --color-media-movies: #B91C1C;
+  --color-media-tv: #1D4ED8;
+  --color-media-games: #15803D;
+
+  /* Status colors */
+  --color-status-success: #16A34A;
+  --color-status-warning: #CA8A04;
+  --color-status-error: #DC2626;
+  --color-status-info: #2563EB;
+
+  /* Shadows — warm tinted */
+  --shadow-card: 0 1px 3px rgba(30, 20, 10, 0.1);
+  --shadow-modal: 0 8px 32px rgba(30, 20, 10, 0.2);
+  --shadow-hover-lift: 0 4px 12px rgba(30, 20, 10, 0.12);
+}
+
+/* ─── Theme Transition ─────────────────────────────────────────────────────── */
+
+html[data-theme-transition] * {
+  transition: background-color 200ms ease, color 200ms ease,
+    border-color 200ms ease, box-shadow 200ms ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme-transition] * {
+    transition: none !important;
+  }
 }
 
 /* ─── Tailwind Theme Extensions ──────────────────────────────────────────────
@@ -39,20 +122,46 @@
   --font-sans: 'DM Sans', system-ui, sans-serif;
   --font-heading: 'Syne', system-ui, sans-serif;
 
+  /* Surface tokens */
   --color-surface-primary: var(--color-bg-primary);
   --color-surface-secondary: var(--color-bg-secondary);
   --color-surface-tertiary: var(--color-bg-tertiary);
   --color-surface-active: var(--color-bg-active);
+  --color-surface-card: var(--color-bg-card);
 
+  /* Content tokens */
   --color-content-primary: var(--color-text-primary);
   --color-content-secondary: var(--color-text-secondary);
   --color-content-muted: var(--color-text-muted);
+  --color-content-inverse: var(--color-text-inverse);
 
+  /* Edge tokens */
   --color-edge: var(--color-border);
-  --color-edge-hover: var(--color-border-hover);
+  --color-edge-subtle: var(--color-border-subtle);
+  --color-edge-strong: var(--color-border-strong);
 
+  /* Accent tokens */
   --color-accent: var(--color-accent);
   --color-accent-hover: var(--color-accent-hover);
+  --color-accent-active: var(--color-accent-active);
+
+  /* Media type tokens */
+  --color-media-books: var(--color-media-books);
+  --color-media-music: var(--color-media-music);
+  --color-media-movies: var(--color-media-movies);
+  --color-media-tv: var(--color-media-tv);
+  --color-media-games: var(--color-media-games);
+
+  /* Status tokens */
+  --color-status-success: var(--color-status-success);
+  --color-status-warning: var(--color-status-warning);
+  --color-status-error: var(--color-status-error);
+  --color-status-info: var(--color-status-info);
+
+  /* Shadow tokens */
+  --shadow-card: var(--shadow-card);
+  --shadow-modal: var(--shadow-modal);
+  --shadow-hover-lift: var(--shadow-hover-lift);
 }
 
 /* ─── Font Faces (variable fonts, latin subset) ──────────────────────────── */
