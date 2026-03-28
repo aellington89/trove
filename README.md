@@ -50,11 +50,17 @@ src/
     ├── assets/
     │   └── fonts/                 # Syne + DM Sans (local, no CDN)
     └── src/
-        ├── main.tsx               # React entry point
+        ├── main.tsx               # React entry point + store initialization
         ├── App.tsx                # Root component
         ├── app.css                # Tailwind imports, font faces, theme
-        └── lib/
-            └── trove-api.ts       # Typed renderer API wrapper (IPC client)
+        ├── lib/
+        │   └── trove-api.ts       # Typed renderer API wrapper (IPC client)
+        └── stores/
+            ├── index.ts           # Barrel export for all stores + subscriptions
+            ├── items-store.ts     # Items CRUD state + actions (fetches via IPC)
+            ├── media-types-store.ts # Media type list state + lookup helper
+            ├── ui-store.ts        # View, filter, sort, search, sidebar state
+            └── subscriptions.ts   # Cross-store wiring (filter changes → refetch)
 ```
 
 Build output goes to `out/` (Vite bundles) and `dist/` (packaged binaries). Database is stored at `{userData}/library.trove` with a sibling `/covers` directory for cover art.
@@ -118,6 +124,7 @@ npm run test:coverage  # Vitest with coverage
 
 Phase 1: Foundation — core shell, database, browsing views, and media type system.
 
+- **1.4 Zustand Store Setup** (2026-03-27) — Three Zustand stores (items, media types, UI state), cross-store subscriptions with debounced search, devtools middleware, store unit tests
 - **Hotfix** (2026-03-22) — Added `.gitattributes` to normalize line endings, fixing phantom CRLF/LF diffs on Windows (#22)
 - **1.3 Data Access Layer** (2026-03-21) — IPC handlers for CRUD operations, typed renderer API, shared TypeScript interfaces, repository pattern with tests
 - **1.2 SQLite Integration** (2026-03-21) — better-sqlite3, migration system, items/media_types schema, 5 built-in media type seeds, Vitest setup
