@@ -52,6 +52,13 @@ export async function deleteItem(id: string): Promise<{ id: string }> {
   return unwrap(result)
 }
 
+export async function getItemCounts(): Promise<Record<string, number>> {
+  const result = (await window.trove.invoke('trove:items:counts')) as IpcResult<
+    Record<string, number>
+  >
+  return unwrap(result)
+}
+
 export async function getMediaTypes(): Promise<MediaType[]> {
   const result = (await window.trove.invoke('trove:media-types:list')) as IpcResult<MediaType[]>
   return unwrap(result)

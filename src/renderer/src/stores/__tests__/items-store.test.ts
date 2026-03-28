@@ -47,6 +47,7 @@ describe('Items Store', () => {
       const state = useItemsStore.getState()
       expect(state.items).toEqual([])
       expect(state.total).toBe(0)
+      expect(state.itemCounts).toEqual({})
       expect(state.selectedItem).toBeNull()
       expect(state.isLoading).toBe(false)
       expect(state.error).toBeNull()
@@ -131,17 +132,38 @@ describe('Items Store', () => {
     })
   })
 
+  describe('fetchItemCounts', () => {
+    it('fetches and stores item counts by type', async () => {
+      const counts = { books: 5, music: 3 }
+      vi.mocked(troveApi.getItemCounts).mockResolvedValue(counts)
+
+      await useItemsStore.getState().fetchItemCounts()
+
+      expect(useItemsStore.getState().itemCounts).toEqual(counts)
+    })
+
+    it('handles errors', async () => {
+      vi.mocked(troveApi.getItemCounts).mockRejectedValue(new Error('DB error'))
+
+      await useItemsStore.getState().fetchItemCounts()
+
+      expect(useItemsStore.getState().error).toBe('DB error')
+    })
+  })
+
   describe('createItem', () => {
-    it('creates an item and refreshes the list', async () => {
+    it('creates an item and refreshes the list and counts', async () => {
       const input: CreateItemInput = { type: 'books', title: 'New Book' }
       vi.mocked(troveApi.createItem).mockResolvedValue(mockItem)
       vi.mocked(troveApi.getItems).mockResolvedValue({ items: [mockItem], total: 1 })
+      vi.mocked(troveApi.getItemCounts).mockResolvedValue({ books: 1 })
 
       const result = await useItemsStore.getState().createItem(input)
 
       expect(troveApi.createItem).toHaveBeenCalledWith(input)
       expect(result).toEqual(mockItem)
       expect(troveApi.getItems).toHaveBeenCalled()
+      expect(troveApi.getItemCounts).toHaveBeenCalled()
       expect(useItemsStore.getState().items).toEqual([mockItem])
     })
   })
@@ -201,11 +223,13 @@ describe('Items Store', () => {
       await useItemsStore.getState().fetchItems()
 
       vi.mocked(troveApi.deleteItem).mockResolvedValue({ id: '01ABC' })
+      vi.mocked(troveApi.getItemCounts).mockResolvedValue({ music: 1 })
 
       await useItemsStore.getState().deleteItem('01ABC')
 
       expect(useItemsStore.getState().items).toEqual([mockItem2])
       expect(useItemsStore.getState().total).toBe(1)
+      expect(troveApi.getItemCounts).toHaveBeenCalled()
     })
 
     it('clears selectedItem if it was the deleted item', async () => {
@@ -213,6 +237,7 @@ describe('Items Store', () => {
       await useItemsStore.getState().fetchItem('01ABC')
 
       vi.mocked(troveApi.deleteItem).mockResolvedValue({ id: '01ABC' })
+      vi.mocked(troveApi.getItemCounts).mockResolvedValue({})
 
       await useItemsStore.getState().deleteItem('01ABC')
 
@@ -227,6 +252,7 @@ describe('Items Store', () => {
       await useItemsStore.getState().fetchItems()
 
       vi.mocked(troveApi.deleteItem).mockResolvedValue({ id: '01ABC' })
+      vi.mocked(troveApi.getItemCounts).mockResolvedValue({ music: 1 })
 
       await useItemsStore.getState().deleteItem('01ABC')
 

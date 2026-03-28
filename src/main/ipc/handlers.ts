@@ -8,6 +8,7 @@ import {
   insertItem,
   updateItem,
   deleteItem,
+  countItemsByType,
 } from '../database/repositories/items'
 import { findAllMediaTypes } from '../database/repositories/media-types'
 import type { IpcResult, ItemFilter, CreateItemInput, UpdateItemInput } from '@shared/types'
@@ -79,6 +80,14 @@ export function registerIpcHandlers(): void {
       }
 
       return ok({ id })
+    } catch (err) {
+      return fail('DB_ERROR', (err as Error).message)
+    }
+  })
+
+  ipcMain.handle('trove:items:counts', () => {
+    try {
+      return ok(countItemsByType(getDatabase()))
     } catch (err) {
       return fail('DB_ERROR', (err as Error).message)
     }

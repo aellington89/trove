@@ -12,6 +12,7 @@ import {
   insertItem,
   updateItem,
   deleteItem,
+  countItemsByType,
   computeCoverHue,
 } from '../items'
 
@@ -250,5 +251,32 @@ describe('deleteItem', () => {
     const result = deleteItem(db, 'NONEXISTENT_ID')
     expect(result.deleted).toBe(false)
     expect(result.coverPath).toBeNull()
+  })
+})
+
+describe('countItemsByType', () => {
+  it('should return empty object when no items exist', () => {
+    const counts = countItemsByType(db)
+    expect(counts).toEqual({})
+  })
+
+  it('should count items grouped by type', () => {
+    insertItem(db, { type: 'books', title: 'Book 1' })
+    insertItem(db, { type: 'books', title: 'Book 2' })
+    insertItem(db, { type: 'music', title: 'Album 1' })
+    insertItem(db, { type: 'games', title: 'Game 1' })
+
+    const counts = countItemsByType(db)
+    expect(counts).toEqual({ books: 2, music: 1, games: 1 })
+  })
+
+  it('should update counts after deletion', () => {
+    const item = insertItem(db, { type: 'books', title: 'Book 1' })
+    insertItem(db, { type: 'books', title: 'Book 2' })
+
+    deleteItem(db, item.id)
+
+    const counts = countItemsByType(db)
+    expect(counts).toEqual({ books: 1 })
   })
 })

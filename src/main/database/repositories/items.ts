@@ -194,6 +194,18 @@ export function updateItem(db: Database.Database, id: string, input: UpdateItemI
   return findItemById(db, id)!
 }
 
+export function countItemsByType(db: Database.Database): Record<string, number> {
+  const rows = db.prepare('SELECT type, COUNT(*) as count FROM items GROUP BY type').all() as {
+    type: string
+    count: number
+  }[]
+  const counts: Record<string, number> = {}
+  for (const row of rows) {
+    counts[row.type] = row.count
+  }
+  return counts
+}
+
 export function deleteItem(
   db: Database.Database,
   id: string,

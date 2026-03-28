@@ -1,0 +1,24 @@
+.sidebar {
+  width: var(--sidebar-width-expanded);
+  min-width: var(--sidebar-width-expanded);
+  transition:
+    width var(--sidebar-transition-duration) ease-in-out,
+    min-width var(--sidebar-transition-duration) ease-in-out;
+  will-change: width, min-width;
+  overflow: hidden;
+}
+
+.sidebarCollapsed {
+  width: var(--sidebar-width-collapsed);
+  min-width: var(--sidebar-width-collapsed);
+}
+
+.itemLabel {
+  transition: opacity calc(var(--sidebar-transition-duration) * 0.6) ease-in-out;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.itemLabelHidden {
+  opacity: 0;
+}

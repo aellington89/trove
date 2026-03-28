@@ -1,12 +1,62 @@
 @import 'tailwindcss';
 @source "../src/**/*.{tsx,ts}";
 
+/* ─── Design Tokens (CSS Custom Properties) ──────────────────────────────────
+   Dark theme is the default. Issue #1.6 will add [data-theme="light"] overrides.
+   All component colors reference these variables — no hardcoded color values. */
+
+:root {
+  /* Surface colors */
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #141414;
+  --color-bg-tertiary: #1e1e1e;
+  --color-bg-active: #262626;
+
+  /* Text colors */
+  --color-text-primary: #f5f5f5;
+  --color-text-secondary: #a3a3a3;
+  --color-text-muted: #737373;
+
+  /* Border colors */
+  --color-border: #262626;
+  --color-border-hover: #404040;
+
+  /* Accent */
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+
+  /* Layout dimensions */
+  --sidebar-width-expanded: 240px;
+  --sidebar-width-collapsed: 56px;
+  --sidebar-transition-duration: 200ms;
+  --topbar-height: 56px;
+}
+
+/* ─── Tailwind Theme Extensions ──────────────────────────────────────────────
+   Registers CSS custom properties as Tailwind tokens for utility class use. */
+
 @theme {
   --font-sans: 'DM Sans', system-ui, sans-serif;
   --font-heading: 'Syne', system-ui, sans-serif;
+
+  --color-surface-primary: var(--color-bg-primary);
+  --color-surface-secondary: var(--color-bg-secondary);
+  --color-surface-tertiary: var(--color-bg-tertiary);
+  --color-surface-active: var(--color-bg-active);
+
+  --color-content-primary: var(--color-text-primary);
+  --color-content-secondary: var(--color-text-secondary);
+  --color-content-muted: var(--color-text-muted);
+
+  --color-edge: var(--color-border);
+  --color-edge-hover: var(--color-border-hover);
+
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
 }
 
-/* --- Font Faces (variable fonts, latin subset) --- */
+/* ─── Font Faces (variable fonts, latin subset) ──────────────────────────── */
+
 @font-face {
   font-family: 'Syne';
   src: url('../assets/fonts/Syne-Variable.woff2') format('woff2');
@@ -23,13 +73,16 @@
   font-display: swap;
 }
 
-/* --- Base Styles ---
+/* ─── Base Styles ────────────────────────────────────────────────────────────
    Applied with !important to override Tailwind's preflight which uses
    unresolved --theme() functions in the Electron/Vite build pipeline. */
+
 html,
 body {
   margin: 0;
   font-family: 'DM Sans', system-ui, sans-serif !important;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
