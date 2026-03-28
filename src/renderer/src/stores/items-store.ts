@@ -7,6 +7,7 @@ import { useUIStore } from './ui-store'
 interface ItemsState {
   items: Item[]
   total: number
+  itemCounts: Record<string, number>
   selectedItem: Item | null
   isLoading: boolean
   error: string | null
@@ -15,6 +16,7 @@ interface ItemsState {
 interface ItemsActions {
   fetchItems: () => Promise<void>
   fetchItem: (id: string) => Promise<void>
+  fetchItemCounts: () => Promise<void>
   createItem: (data: CreateItemInput) => Promise<Item>
   updateItem: (id: string, data: UpdateItemInput) => Promise<Item>
   deleteItem: (id: string) => Promise<void>
@@ -24,6 +26,7 @@ interface ItemsActions {
 const initialState: ItemsState = {
   items: [],
   total: 0,
+  itemCounts: {},
   selectedItem: null,
   isLoading: false,
   error: null,
@@ -54,6 +57,17 @@ export const useItemsStore = create<ItemsState & ItemsActions>()(
         }
       },
 
+      fetchItemCounts: async () => {
+        try {
+          const itemCounts = await troveApi.getItemCounts()
+          set({ itemCounts })
+        } catch (err) {
+          set({
+            error: err instanceof Error ? err.message : 'Failed to fetch item counts',
+          })
+        }
+      },
+
       fetchItem: async (id) => {
         try {
           const item = await troveApi.getItem(id)
@@ -68,6 +82,7 @@ export const useItemsStore = create<ItemsState & ItemsActions>()(
       createItem: async (data) => {
         const item = await troveApi.createItem(data)
         await get().fetchItems()
+        await get().fetchItemCounts()
         return item
       },
 
@@ -87,6 +102,7 @@ export const useItemsStore = create<ItemsState & ItemsActions>()(
           total: state.total - 1,
           selectedItem: state.selectedItem?.id === id ? null : state.selectedItem,
         }))
+        await get().fetchItemCounts()
       },
 
       _reset: () => set(initialState),

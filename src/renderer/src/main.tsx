@@ -7,6 +7,7 @@ import { setupStoreSubscriptions, useMediaTypesStore, useItemsStore } from './st
 setupStoreSubscriptions()
 useMediaTypesStore.getState().fetchMediaTypes()
 useItemsStore.getState().fetchItems()
+useItemsStore.getState().fetchItemCounts()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

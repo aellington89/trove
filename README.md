@@ -14,6 +14,7 @@ Built with Electron, React, TypeScript, and SQLite. Local-first, no accounts, no
 | Styling | Tailwind CSS v4 + CSS Modules |
 | State | Zustand |
 | Database | SQLite (via better-sqlite3) |
+| Icons | lucide-react |
 | Typography | Syne (display) + DM Sans (body) |
 | Packaging | electron-builder |
 
@@ -26,7 +27,7 @@ src/
 ├── main/                          # Electron main process (Node.js)
 │   ├── index.ts                   # Window management, app lifecycle, handler registration
 │   ├── ipc/
-│   │   └── handlers.ts            # IPC channel registration (6 CRUD handlers)
+│   │   └── handlers.ts            # IPC channel registration (7 CRUD + count handlers)
 │   └── database/
 │       ├── index.ts               # setupDatabase() orchestrator
 │       ├── connection.ts          # Singleton DB connection, path helpers
@@ -36,7 +37,7 @@ src/
 │       │   ├── 001_create_items.ts        # Items table schema + indexes
 │       │   └── 002_create_media_types.ts  # Media types table schema
 │       ├── repositories/
-│       │   ├── items.ts           # Item CRUD operations (find, insert, update, delete)
+│       │   ├── items.ts           # Item CRUD + countItemsByType operations
 │       │   └── media-types.ts     # Media type queries
 │       ├── seeds/
 │       │   └── media-types.ts     # 5 built-in media type definitions + seeder
@@ -51,13 +52,25 @@ src/
     │   └── fonts/                 # Syne + DM Sans (local, no CDN)
     └── src/
         ├── main.tsx               # React entry point + store initialization
-        ├── App.tsx                # Root component
-        ├── app.css                # Tailwind imports, font faces, theme
+        ├── App.tsx                # Root component (renders AppShell)
+        ├── app.css                # Tailwind imports, CSS custom properties, font faces
+        ├── hooks/
+        │   └── useMediaQuery.ts   # Responsive breakpoint hook (matchMedia API)
+        ├── components/
+        │   └── layout/
+        │       ├── AppShell.tsx       # Root layout: sidebar + main column
+        │       ├── Sidebar.tsx        # Collapsible sidebar with media type navigation
+        │       ├── SidebarItem.tsx    # Single sidebar row (icon + label + count)
+        │       ├── TopBar.tsx         # Search, view toggles, sort, add, theme
+        │       ├── ViewToggle.tsx     # Grid/list/table icon button group
+        │       ├── SortDropdown.tsx   # Sort field + direction dropdown
+        │       ├── MainContent.tsx    # Scrollable content host + empty/loading states
+        │       └── Sidebar.module.css # Sidebar collapse/expand animation
         ├── lib/
         │   └── trove-api.ts       # Typed renderer API wrapper (IPC client)
         └── stores/
             ├── index.ts           # Barrel export for all stores + subscriptions
-            ├── items-store.ts     # Items CRUD state + actions (fetches via IPC)
+            ├── items-store.ts     # Items CRUD state + item counts + actions
             ├── media-types-store.ts # Media type list state + lookup helper
             ├── ui-store.ts        # View, filter, sort, search, sidebar state
             └── subscriptions.ts   # Cross-store wiring (filter changes → refetch)
@@ -120,9 +133,13 @@ npm run test:coverage  # Vitest with coverage
 
 ## Changelog
 
-### v0.0.2 (in progress)
+Phase 1: Foundation — app shell, browsing views, and theming.
 
-Phase 1: Foundation — core shell, database, browsing views, and media type system.
+### v0.0.3 (in progress)
+
+- **1.5 App Shell and Layout** (2026-03-27) — Collapsible sidebar with media type navigation and item counts, top bar with search/view toggles/sort/add controls, responsive auto-collapse at 1280px, dark-first CSS custom property token system, `lucide-react` icons, `countItemsByType` IPC channel, empty and loading states
+
+### v0.0.2
 
 - **1.4 Zustand Store Setup** (2026-03-27) — Three Zustand stores (items, media types, UI state), cross-store subscriptions with debounced search, devtools middleware, store unit tests
 - **Hotfix** (2026-03-22) — Added `.gitattributes` to normalize line endings, fixing phantom CRLF/LF diffs on Windows (#22)
