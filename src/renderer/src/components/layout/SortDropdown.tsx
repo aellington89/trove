@@ -121,7 +121,7 @@ export function SortDropdown() {
           ref={listRef}
           role="listbox"
           aria-label="Sort by"
-          className="absolute left-0 top-full z-10 mt-1 w-40 rounded-lg border border-edge bg-surface-secondary py-1 shadow-lg"
+          className="absolute left-0 top-full z-10 mt-1 w-40 rounded-lg border border-edge bg-surface-secondary py-1 shadow-card"
         >
           {sortFields.map((field, index) => (
             <li

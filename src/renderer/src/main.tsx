@@ -2,9 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './app.css'
-import { setupStoreSubscriptions, useMediaTypesStore, useItemsStore } from './stores'
+import { setupStoreSubscriptions, useMediaTypesStore, useItemsStore, useThemeStore } from './stores'
 
 setupStoreSubscriptions()
+useThemeStore.getState()
 useMediaTypesStore.getState().fetchMediaTypes()
 useItemsStore.getState().fetchItems()
 useItemsStore.getState().fetchItemCounts()
