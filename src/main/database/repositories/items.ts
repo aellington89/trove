@@ -7,6 +7,7 @@ import type {
   ItemFilter,
   PaginatedResult,
 } from '@shared/types'
+import { computeCoverHue } from '../../../shared/hash'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -32,14 +33,7 @@ function parseItemRow(row: RawItemRow): Item {
   }
 }
 
-/** Deterministic hue (0–359) derived from a title string using djb2 hash. */
-export function computeCoverHue(title: string): number {
-  let hash = 5381
-  for (let i = 0; i < title.length; i++) {
-    hash = ((hash << 5) + hash + title.charCodeAt(i)) | 0
-  }
-  return ((hash % 360) + 360) % 360
-}
+export { computeCoverHue } from '../../../shared/hash'
 
 /** Shared columns that are safe to use directly in ORDER BY. */
 const SORTABLE_COLUMNS = new Set([
