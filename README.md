@@ -22,8 +22,11 @@ Built with Electron, React, TypeScript, and SQLite. Local-first, no accounts, no
 
 ```
 src/
-├── shared/                        # Shared TypeScript interfaces (main + renderer)
-│   └── types.ts                   # Item, MediaType, IPC result types, filters
+├── shared/                        # Shared TypeScript interfaces + utilities (main + renderer)
+│   ├── types.ts                   # Item, MediaType, IPC result types, filters
+│   ├── hash.ts                    # djb2 string hash + computeCoverHue helper
+│   └── __tests__/
+│       └── hash.test.ts           # Hash utility tests
 ├── main/                          # Electron main process (Node.js)
 │   ├── index.ts                   # Window management, app lifecycle, handler registration
 │   ├── ipc/
@@ -38,7 +41,10 @@ src/
 │       │   └── 002_create_media_types.ts  # Media types table schema
 │       ├── repositories/
 │       │   ├── items.ts           # Item CRUD + countItemsByType operations
-│       │   └── media-types.ts     # Media type queries
+│       │   ├── media-types.ts     # Media type queries
+│       │   └── __tests__/
+│       │       ├── items.test.ts          # Item repository tests
+│       │       └── media-types.test.ts    # Media type repository tests
 │       ├── seeds/
 │       │   └── media-types.ts     # 5 built-in media type definitions + seeder
 │       └── __tests__/
@@ -54,9 +60,19 @@ src/
         ├── main.tsx               # React entry point + store initialization
         ├── App.tsx                # Root component (renders AppShell)
         ├── app.css                # Tailwind imports, CSS design tokens (dark/light themes), font faces
+        ├── theme-init.js          # Pre-paint theme script (prevents flash of wrong theme)
         ├── hooks/
         │   └── useMediaQuery.ts   # Responsive breakpoint hook (matchMedia API)
         ├── components/
+        │   ├── covers/
+        │   │   ├── ProceduralCover.tsx # Deterministic SVG cover art from title + media type
+        │   │   ├── motifs.tsx         # Per-media-type geometric pattern generators
+        │   │   ├── text-layout.ts     # Title word-wrap + font sizing for cover text
+        │   │   ├── index.ts           # Barrel export
+        │   │   └── __tests__/
+        │   │       ├── ProceduralCover.test.tsx # Cover component tests
+        │   │       ├── motifs.test.tsx          # Motif generator tests
+        │   │       └── text-layout.test.ts      # Text layout tests
         │   └── layout/
         │       ├── AppShell.tsx       # Root layout: sidebar + main column
         │       ├── Sidebar.tsx        # Collapsible sidebar with media type navigation
@@ -73,8 +89,12 @@ src/
             ├── items-store.ts     # Items CRUD state + item counts + actions
             ├── media-types-store.ts # Media type list state + lookup helper
             ├── theme-store.ts     # Theme state + toggle + localStorage persistence
-            ├── ui-store.ts        # View, filter, sort, search, sidebar state
-            └── subscriptions.ts   # Cross-store wiring (filter changes → refetch)
+            ├── subscriptions.ts   # Cross-store wiring (filter changes → refetch)
+            └── __tests__/
+                ├── items-store.test.ts       # Items store tests
+                ├── media-types-store.test.ts  # Media types store tests
+                ├── theme-store.test.ts        # Theme store tests
+                └── subscriptions.test.ts      # Subscriptions tests
 ```
 
 Build output goes to `out/` (Vite bundles) and `dist/` (packaged binaries). Database is stored at `{userData}/library.trove` with a sibling `/covers` directory for cover art.
@@ -138,6 +158,7 @@ Phase 1: Foundation — app shell, browsing views, and theming.
 
 ### v0.0.3 (In Progress)
 
+- **1.7 Procedural Cover Art** (2026-03-29) — `ProceduralCover` React component that generates deterministic SVG-based cover art from title + media type, djb2 hash for hue derivation and pattern seeding, 5 distinct geometric motifs (books: stacked spines, music: vinyl grooves, movies: film strip, TV: screen grid, games: pixel tessellation) plus a generic default for custom types, hue-derived self-contained color palette for both themes, Syne font title rendering with word-wrap, three sizes (sm/md/lg), `React.memo` memoization, shared hash utility extracted to `src/shared/hash.ts`
 - **1.6 Theme System + CSS Variables** (2026-03-28) — Complete CSS custom property system with Dark Vault (charcoal + amber) and Light Archive (warm beige + muted gold) themes, smooth 200ms theme toggle with `prefers-reduced-motion` support, localStorage persistence with no-flash pre-paint script, Zustand theme store with persist middleware, media type signature colors as CSS vars, status/shadow design tokens, Tailwind v4 `@theme` integration for all tokens
 - **1.5 App Shell and Layout** (2026-03-27) — Collapsible sidebar with media type navigation and item counts, top bar with search/view toggles/sort/add controls, responsive auto-collapse at 1280px, dark-first CSS custom property token system, `lucide-react` icons, `countItemsByType` IPC channel, empty and loading states
 

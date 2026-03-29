@@ -8,41 +8,41 @@
 
 :root {
   /* Surface colors */
-  --color-bg-primary: #0D0D0F;
+  --color-bg-primary: #0d0d0f;
   --color-bg-secondary: #141416;
-  --color-bg-tertiary: #1C1C1F;
+  --color-bg-tertiary: #1c1c1f;
   --color-bg-active: #262628;
-  --color-bg-card: #1C1C1F;
+  --color-bg-card: #1c1c1f;
   --color-bg-modal-overlay: rgba(0, 0, 0, 0.6);
 
   /* Text colors */
-  --color-text-primary: #F5F0E8;
-  --color-text-secondary: #A8A29E;
-  --color-text-muted: #78716C;
-  --color-text-inverse: #0D0D0F;
+  --color-text-primary: #f5f0e8;
+  --color-text-secondary: #a8a29e;
+  --color-text-muted: #78716c;
+  --color-text-inverse: #0d0d0f;
 
   /* Border colors */
   --color-border: #262628;
-  --color-border-subtle: #1C1C1F;
-  --color-border-strong: #3F3F43;
+  --color-border-subtle: #1c1c1f;
+  --color-border-strong: #3f3f43;
 
   /* Accent */
-  --color-accent: #E8A838;
-  --color-accent-hover: #D4952E;
-  --color-accent-active: #C08524;
+  --color-accent: #e8a838;
+  --color-accent-hover: #d4952e;
+  --color-accent-active: #c08524;
 
   /* Media type signature colors */
-  --color-media-books: #5A8A4C;
-  --color-media-music: #9B6FF6;
-  --color-media-movies: #E03E3E;
-  --color-media-tv: #4080F0;
-  --color-media-games: #22B352;
+  --color-media-books: #5a8a4c;
+  --color-media-music: #9b6ff6;
+  --color-media-movies: #e03e3e;
+  --color-media-tv: #4080f0;
+  --color-media-games: #22b352;
 
   /* Status colors */
-  --color-status-success: #22C55E;
-  --color-status-warning: #EAB308;
-  --color-status-error: #EF4444;
-  --color-status-info: #3B82F6;
+  --color-status-success: #22c55e;
+  --color-status-warning: #eab308;
+  --color-status-error: #ef4444;
+  --color-status-info: #3b82f6;
 
   /* Shadows */
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -58,43 +58,43 @@
 
 /* ─── Light Archive Theme ──────────────────────────────────────────────────── */
 
-[data-theme="light"] {
+[data-theme='light'] {
   /* Surface colors — rich wood and worn leather */
-  --color-bg-primary: #E4D5BE;
-  --color-bg-secondary: #D5C3A6;
-  --color-bg-tertiary: #C9B494;
-  --color-bg-active: #BDA683;
-  --color-bg-card: #EDE2D0;
+  --color-bg-primary: #e4d5be;
+  --color-bg-secondary: #d5c3a6;
+  --color-bg-tertiary: #c9b494;
+  --color-bg-active: #bda683;
+  --color-bg-card: #ede2d0;
   --color-bg-modal-overlay: rgba(40, 25, 10, 0.4);
 
   /* Text colors — espresso and dark leather */
-  --color-text-primary: #1A0F04;
-  --color-text-secondary: #4A3626;
-  --color-text-muted: #7D6B56;
-  --color-text-inverse: #E4D5BE;
+  --color-text-primary: #1a0f04;
+  --color-text-secondary: #4a3626;
+  --color-text-muted: #7d6b56;
+  --color-text-inverse: #e4d5be;
 
   /* Border colors — wood grain */
-  --color-border: #B09A78;
-  --color-border-subtle: #C4AF90;
-  --color-border-strong: #8F7A5A;
+  --color-border: #b09a78;
+  --color-border-subtle: #c4af90;
+  --color-border-strong: #8f7a5a;
 
   /* Accent — burnished brass */
-  --color-accent: #A67A0A;
-  --color-accent-hover: #8B6608;
-  --color-accent-active: #6F5206;
+  --color-accent: #a67a0a;
+  --color-accent-hover: #8b6608;
+  --color-accent-active: #6f5206;
 
   /* Media type signature colors — deeper tones for warm backgrounds */
-  --color-media-books: #3D6B2E;
-  --color-media-music: #7C3AED;
-  --color-media-movies: #B91C1C;
-  --color-media-tv: #1D4ED8;
-  --color-media-games: #15803D;
+  --color-media-books: #3d6b2e;
+  --color-media-music: #7c3aed;
+  --color-media-movies: #b91c1c;
+  --color-media-tv: #1d4ed8;
+  --color-media-games: #15803d;
 
   /* Status colors */
-  --color-status-success: #16A34A;
-  --color-status-warning: #CA8A04;
-  --color-status-error: #DC2626;
-  --color-status-info: #2563EB;
+  --color-status-success: #16a34a;
+  --color-status-warning: #ca8a04;
+  --color-status-error: #dc2626;
+  --color-status-info: #2563eb;
 
   /* Shadows — warm tinted */
   --shadow-card: 0 1px 3px rgba(30, 20, 10, 0.1);
@@ -105,8 +105,11 @@
 /* ─── Theme Transition ─────────────────────────────────────────────────────── */
 
 html[data-theme-transition] * {
-  transition: background-color 200ms ease, color 200ms ease,
-    border-color 200ms ease, box-shadow 200ms ease !important;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
