@@ -8,10 +8,11 @@ export interface ProceduralCoverProps {
   title: string
   type: string
   hue: number
-  size: 'sm' | 'md' | 'lg'
+  size: 'xs' | 'sm' | 'md' | 'lg'
 }
 
 const SIZE_MAP = {
+  xs: { width: 48, height: 48 },
   sm: { width: 120, height: 180 },
   md: { width: 160, height: 240 },
   lg: { width: 240, height: 360 },

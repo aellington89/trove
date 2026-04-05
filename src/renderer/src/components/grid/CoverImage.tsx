@@ -5,9 +5,10 @@ import { ProceduralCover } from '../covers'
 
 export interface CoverImageProps {
   item: Item
+  size?: 'xs' | 'sm' | 'md'
 }
 
-export const CoverImage = memo(function CoverImage({ item }: CoverImageProps): ReactElement {
+export const CoverImage = memo(function CoverImage({ item, size = 'md' }: CoverImageProps): ReactElement {
   const [imgError, setImgError] = useState(false)
 
   if (!item.cover_path || imgError) {
@@ -17,7 +18,7 @@ export const CoverImage = memo(function CoverImage({ item }: CoverImageProps): R
           title={item.title}
           type={item.type}
           hue={item.cover_hue ?? 0}
-          size="md"
+          size={size}
         />
       </div>
     )
