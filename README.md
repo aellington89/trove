@@ -73,6 +73,17 @@ src/
         │   │       ├── ProceduralCover.test.tsx # Cover component tests
         │   │       ├── motifs.test.tsx          # Motif generator tests
         │   │       └── text-layout.test.ts      # Text layout tests
+        │   ├── grid/
+        │   │   ├── GridView.tsx       # Responsive CSS grid of item cards
+        │   │   ├── ItemCard.tsx       # Cover art card: image, title, creator, rating
+        │   │   ├── CoverImage.tsx     # Cover image with ProceduralCover fallback
+        │   │   ├── SkeletonCard.tsx   # Loading placeholder card
+        │   │   └── __tests__/
+        │   │       └── ItemCard.test.tsx       # Item card render tests
+        │   ├── ui/
+        │   │   ├── StarRating.tsx     # Reusable 0–5 star rating display
+        │   │   └── __tests__/
+        │   │       └── StarRating.test.tsx     # Star rating render tests
         │   └── layout/
         │       ├── AppShell.tsx       # Root layout: sidebar + main column
         │       ├── Sidebar.tsx        # Collapsible sidebar with media type navigation
@@ -80,10 +91,13 @@ src/
         │       ├── TopBar.tsx         # Search, view toggles, sort, add, theme
         │       ├── ViewToggle.tsx     # Grid/list/table icon button group
         │       ├── SortDropdown.tsx   # Sort field + direction dropdown
-        │       ├── MainContent.tsx    # Scrollable content host + empty/loading states
+        │       ├── MainContent.tsx    # Scrollable content host + grid/empty/loading states
         │       └── Sidebar.module.css # Sidebar collapse/expand animation
         ├── lib/
-        │   └── trove-api.ts       # Typed renderer API wrapper (IPC client)
+        │   ├── trove-api.ts       # Typed renderer API wrapper (IPC client)
+        │   ├── get-creator.ts     # Extract creator field from item metadata by media type
+        │   └── __tests__/
+        │       └── get-creator.test.ts  # Creator extraction tests
         └── stores/
             ├── index.ts           # Barrel export for all stores + subscriptions
             ├── items-store.ts     # Items CRUD state + item counts + actions
@@ -158,6 +172,7 @@ Phase 1: Foundation — app shell, browsing views, and theming.
 
 ### v0.0.3 (In Progress)
 
+- **1.8 Grid View** (2026-04-04) — Responsive CSS grid browsing view with `auto-fill`/`minmax()` layout, `ItemCard` component with cover art (real or procedural), title, creator subtitle, and star rating, `StarRating` reusable component, `CoverImage` with ProceduralCover fallback, skeleton loading grid (12 cards), keyboard navigation with Enter/Space activation, hover lift animation with `prefers-reduced-motion` support, creator extraction from media type `fields_schema`, selection state wired to Zustand items store
 - **1.7 Procedural Cover Art** (2026-03-29) — `ProceduralCover` React component that generates deterministic SVG-based cover art from title + media type, djb2 hash for hue derivation and pattern seeding, 5 distinct geometric motifs (books: stacked spines, music: vinyl grooves, movies: film strip, TV: screen grid, games: pixel tessellation) plus a generic default for custom types, hue-derived self-contained color palette for both themes, Syne font title rendering with word-wrap, three sizes (sm/md/lg), `React.memo` memoization, shared hash utility extracted to `src/shared/hash.ts`
 - **1.6 Theme System + CSS Variables** (2026-03-28) — Complete CSS custom property system with Dark Vault (charcoal + amber) and Light Archive (warm beige + muted gold) themes, smooth 200ms theme toggle with `prefers-reduced-motion` support, localStorage persistence with no-flash pre-paint script, Zustand theme store with persist middleware, media type signature colors as CSS vars, status/shadow design tokens, Tailwind v4 `@theme` integration for all tokens
 - **1.5 App Shell and Layout** (2026-03-27) — Collapsible sidebar with media type navigation and item counts, top bar with search/view toggles/sort/add controls, responsive auto-collapse at 1280px, dark-first CSS custom property token system, `lucide-react` icons, `countItemsByType` IPC channel, empty and loading states
