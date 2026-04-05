@@ -1,4 +1,5 @@
 import { useItemsStore, useUIStore } from '../../stores'
+import { GridView } from '../grid/GridView'
 
 export function MainContent() {
   const items = useItemsStore((s) => s.items)
@@ -7,6 +8,16 @@ export function MainContent() {
   const searchQuery = useUIStore((s) => s.searchQuery)
   const activeView = useUIStore((s) => s.activeView)
 
+  // Grid view handles its own loading skeleton
+  if (isLoading && activeView === 'grid') {
+    return (
+      <div className="flex-1 overflow-y-auto">
+        <GridView items={[]} isLoading={true} />
+      </div>
+    )
+  }
+
+  // Spinner for non-grid loading states
   if (isLoading) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -37,7 +48,16 @@ export function MainContent() {
     )
   }
 
-  // Placeholder content until Grid/List/Table views are implemented (Issues #1.8–1.10)
+  // Grid view
+  if (activeView === 'grid') {
+    return (
+      <div className="flex-1 overflow-y-auto">
+        <GridView items={items} isLoading={false} />
+      </div>
+    )
+  }
+
+  // Placeholder for List/Table views (Issues #1.9–1.10)
   return (
     <div className="flex-1 overflow-y-auto p-4">
       <p className="text-sm text-content-muted">
