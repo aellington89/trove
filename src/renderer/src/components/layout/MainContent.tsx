@@ -1,5 +1,6 @@
 import { useItemsStore, useUIStore } from '../../stores'
 import { GridView } from '../grid/GridView'
+import { ListView } from '../list/ListView'
 
 export function MainContent() {
   const items = useItemsStore((s) => s.items)
@@ -8,7 +9,7 @@ export function MainContent() {
   const searchQuery = useUIStore((s) => s.searchQuery)
   const activeView = useUIStore((s) => s.activeView)
 
-  // Grid view handles its own loading skeleton
+  // Grid and list views handle their own loading skeletons
   if (isLoading && activeView === 'grid') {
     return (
       <div className="flex-1 overflow-y-auto">
@@ -17,7 +18,15 @@ export function MainContent() {
     )
   }
 
-  // Spinner for non-grid loading states
+  if (isLoading && activeView === 'list') {
+    return (
+      <div className="flex-1 overflow-y-auto">
+        <ListView items={[]} isLoading={true} />
+      </div>
+    )
+  }
+
+  // Spinner for remaining loading states (table view)
   if (isLoading) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -57,12 +66,20 @@ export function MainContent() {
     )
   }
 
-  // Placeholder for List/Table views (Issues #1.9–1.10)
+  // List view
+  if (activeView === 'list') {
+    return (
+      <div className="flex-1 overflow-y-auto">
+        <ListView items={items} isLoading={false} />
+      </div>
+    )
+  }
+
+  // Placeholder for Table view (Issue #1.10)
   return (
     <div className="flex-1 overflow-y-auto p-4">
       <p className="text-sm text-content-muted">
-        {items.length} item{items.length !== 1 ? 's' : ''} &middot;{' '}
-        {activeView.charAt(0).toUpperCase() + activeView.slice(1)} view
+        {items.length} item{items.length !== 1 ? 's' : ''} &middot; Table view
       </p>
     </div>
   )

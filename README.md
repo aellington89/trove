@@ -76,14 +76,22 @@ src/
         │   ├── grid/
         │   │   ├── GridView.tsx       # Responsive CSS grid of item cards
         │   │   ├── ItemCard.tsx       # Cover art card: image, title, creator, rating
-        │   │   ├── CoverImage.tsx     # Cover image with ProceduralCover fallback
+        │   │   ├── CoverImage.tsx     # Cover image with ProceduralCover fallback (xs/sm/md sizes)
         │   │   ├── SkeletonCard.tsx   # Loading placeholder card
         │   │   └── __tests__/
         │   │       └── ItemCard.test.tsx       # Item card render tests
+        │   ├── list/
+        │   │   ├── ListView.tsx       # Compact list browsing view with horizontal rows
+        │   │   ├── ListRow.tsx        # Item row: thumbnail, title, creator, status, rating, date
+        │   │   ├── SkeletonRow.tsx    # Loading placeholder row
+        │   │   └── __tests__/
+        │   │       └── ListRow.test.tsx        # List row render tests
         │   ├── ui/
         │   │   ├── StarRating.tsx     # Reusable 0–5 star rating display
+        │   │   ├── StatusBadge.tsx    # Color-coded status pill (Owned, Wishlist, etc.)
         │   │   └── __tests__/
-        │   │       └── StarRating.test.tsx     # Star rating render tests
+        │   │       ├── StarRating.test.tsx     # Star rating render tests
+        │   │       └── StatusBadge.test.tsx    # Status badge render tests
         │   └── layout/
         │       ├── AppShell.tsx       # Root layout: sidebar + main column
         │       ├── Sidebar.tsx        # Collapsible sidebar with media type navigation
@@ -91,13 +99,15 @@ src/
         │       ├── TopBar.tsx         # Search, view toggles, sort, add, theme
         │       ├── ViewToggle.tsx     # Grid/list/table icon button group
         │       ├── SortDropdown.tsx   # Sort field + direction dropdown
-        │       ├── MainContent.tsx    # Scrollable content host + grid/empty/loading states
+        │       ├── MainContent.tsx    # Scrollable content host + grid/list/empty/loading states
         │       └── Sidebar.module.css # Sidebar collapse/expand animation
         ├── lib/
         │   ├── trove-api.ts       # Typed renderer API wrapper (IPC client)
         │   ├── get-creator.ts     # Extract creator field from item metadata by media type
+        │   ├── format-date.ts     # Date formatting utility (Intl.DateTimeFormat)
         │   └── __tests__/
-        │       └── get-creator.test.ts  # Creator extraction tests
+        │       ├── get-creator.test.ts  # Creator extraction tests
+        │       └── format-date.test.ts  # Date formatting tests
         └── stores/
             ├── index.ts           # Barrel export for all stores + subscriptions
             ├── items-store.ts     # Items CRUD state + item counts + actions
@@ -172,6 +182,7 @@ Phase 1: Foundation — app shell, browsing views, and theming.
 
 ### v0.0.3 (In Progress)
 
+- **1.9 List View** (2026-04-05) — Compact list browsing view with `ListRow` component displaying cover thumbnail (48px), title, creator, color-coded `StatusBadge` pill, star rating, and formatted date in a CSS Grid row layout, `ListView` container with divider lines and alternating row backgrounds, `StatusBadge` reusable component with 6 status color mappings (Owned/neutral, Wishlist/accent-filled, Borrowed/info, Lent Out/warning, Completed/success, In Progress/accent-tinted), `SkeletonRow` loading placeholders (8 rows), `formatDate` utility via `Intl.DateTimeFormat`, `CoverImage` extended with `size` prop, `ProceduralCover` extended with `xs` size (48x48), keyboard navigation with Enter/Space activation, hover highlight and selection ring state, wired into `MainContent` view switching
 - **1.8 Grid View** (2026-04-04) — Responsive CSS grid browsing view with `auto-fill`/`minmax()` layout, `ItemCard` component with cover art (real or procedural), title, creator subtitle, and star rating, `StarRating` reusable component, `CoverImage` with ProceduralCover fallback, skeleton loading grid (12 cards), keyboard navigation with Enter/Space activation, hover lift animation with `prefers-reduced-motion` support, creator extraction from media type `fields_schema`, selection state wired to Zustand items store
 - **1.7 Procedural Cover Art** (2026-03-29) — `ProceduralCover` React component that generates deterministic SVG-based cover art from title + media type, djb2 hash for hue derivation and pattern seeding, 5 distinct geometric motifs (books: stacked spines, music: vinyl grooves, movies: film strip, TV: screen grid, games: pixel tessellation) plus a generic default for custom types, hue-derived self-contained color palette for both themes, Syne font title rendering with word-wrap, three sizes (sm/md/lg), `React.memo` memoization, shared hash utility extracted to `src/shared/hash.ts`
 - **1.6 Theme System + CSS Variables** (2026-03-28) — Complete CSS custom property system with Dark Vault (charcoal + amber) and Light Archive (warm beige + muted gold) themes, smooth 200ms theme toggle with `prefers-reduced-motion` support, localStorage persistence with no-flash pre-paint script, Zustand theme store with persist middleware, media type signature colors as CSS vars, status/shadow design tokens, Tailwind v4 `@theme` integration for all tokens
