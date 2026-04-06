@@ -68,4 +68,57 @@ describe('StarRating', () => {
     const html = render({ rating: 1, size: 'md' })
     expect(html).toContain('h-4 w-4')
   })
+
+  describe('interactive mode (onChange provided)', () => {
+    const noop = () => {}
+
+    it('renders 5 buttons when onChange is provided', () => {
+      const html = render({ rating: 3, onChange: noop })
+      const buttonCount = (html.match(/<button/g) || []).length
+      expect(buttonCount).toBe(5)
+    })
+
+    it('uses radiogroup role on container', () => {
+      const html = render({ rating: 2, onChange: noop })
+      expect(html).toContain('role="radiogroup"')
+    })
+
+    it('uses radio role on each star button', () => {
+      const html = render({ rating: 1, onChange: noop })
+      const radioCount = (html.match(/role="radio"/g) || []).length
+      expect(radioCount).toBe(5)
+    })
+
+    it('marks the current rating star as aria-checked', () => {
+      const html = render({ rating: 3, onChange: noop })
+      const checkedCount = (html.match(/aria-checked="true"/g) || []).length
+      expect(checkedCount).toBe(1)
+    })
+
+    it('has aria-label on each star button', () => {
+      const html = render({ rating: 0, onChange: noop })
+      expect(html).toContain('aria-label="1 star"')
+      expect(html).toContain('aria-label="2 stars"')
+      expect(html).toContain('aria-label="5 stars"')
+    })
+
+    it('always shows all 5 stars even at rating 0', () => {
+      const html = render({ rating: 0, onChange: noop })
+      const buttonCount = (html.match(/<button/g) || []).length
+      expect(buttonCount).toBe(5)
+    })
+
+    it('renders 3 filled and 2 unfilled stars for rating 3', () => {
+      const html = render({ rating: 3, onChange: noop })
+      const filledCount = (html.match(/fill-current/g) || []).length
+      const mutedCount = (html.match(/text-content-muted/g) || []).length
+      expect(filledCount).toBe(3)
+      expect(mutedCount).toBe(2)
+    })
+
+    it('has container aria-label "Rating"', () => {
+      const html = render({ rating: 0, onChange: noop })
+      expect(html).toContain('aria-label="Rating"')
+    })
+  })
 })

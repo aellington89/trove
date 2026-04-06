@@ -14,6 +14,20 @@ describe('UI Store', () => {
       expect(state.searchQuery).toBe('')
       expect(state.sortConfig).toEqual({ field: 'date_added', direction: 'desc' })
       expect(state.sidebarCollapsed).toBe(false)
+      expect(state.addModalOpen).toBe(false)
+    })
+  })
+
+  describe('setAddModalOpen', () => {
+    it('opens the modal', () => {
+      useUIStore.getState().setAddModalOpen(true)
+      expect(useUIStore.getState().addModalOpen).toBe(true)
+    })
+
+    it('closes the modal', () => {
+      useUIStore.getState().setAddModalOpen(true)
+      useUIStore.getState().setAddModalOpen(false)
+      expect(useUIStore.getState().addModalOpen).toBe(false)
     })
   })
 
@@ -72,6 +86,7 @@ describe('UI Store', () => {
       useUIStore.getState().setSearchQuery('bach')
       useUIStore.getState().setSortConfig({ field: 'title', direction: 'asc' })
       useUIStore.getState().toggleSidebar()
+      useUIStore.getState().setAddModalOpen(true)
 
       useUIStore.getState()._reset()
 
@@ -81,6 +96,7 @@ describe('UI Store', () => {
       expect(state.searchQuery).toBe('')
       expect(state.sortConfig).toEqual({ field: 'date_added', direction: 'desc' })
       expect(state.sidebarCollapsed).toBe(false)
+      expect(state.addModalOpen).toBe(false)
     })
   })
 })

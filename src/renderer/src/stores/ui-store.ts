@@ -12,6 +12,7 @@ interface UIState {
   searchQuery: string
   sortConfig: SortConfig
   sidebarCollapsed: boolean
+  addModalOpen: boolean
 }
 
 interface UIActions {
@@ -20,6 +21,7 @@ interface UIActions {
   setSearchQuery: (query: string) => void
   setSortConfig: (config: SortConfig) => void
   toggleSidebar: () => void
+  setAddModalOpen: (open: boolean) => void
   _reset: () => void
 }
 
@@ -29,6 +31,7 @@ const initialState: UIState = {
   searchQuery: '',
   sortConfig: { field: 'date_added', direction: 'desc' },
   sidebarCollapsed: false,
+  addModalOpen: false,
 }
 
 export const useUIStore = create<UIState & UIActions>()(
@@ -40,6 +43,7 @@ export const useUIStore = create<UIState & UIActions>()(
       setSearchQuery: (query) => set({ searchQuery: query }),
       setSortConfig: (config) => set({ sortConfig: config }),
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+      setAddModalOpen: (open) => set({ addModalOpen: open }),
       _reset: () => set(initialState),
     })),
     { name: 'UIStore' },

@@ -6,6 +6,7 @@ import { SortDropdown } from './SortDropdown'
 export function TopBar() {
   const searchQuery = useUIStore((s) => s.searchQuery)
   const setSearchQuery = useUIStore((s) => s.setSearchQuery)
+  const setAddModalOpen = useUIStore((s) => s.setAddModalOpen)
   const theme = useThemeStore((s) => s.theme)
   const toggleTheme = useThemeStore((s) => s.toggleTheme)
 
@@ -40,6 +41,7 @@ export function TopBar() {
 
       {/* Add button */}
       <button
+        onClick={() => setAddModalOpen(true)}
         className="flex h-8 items-center gap-1.5 rounded-lg bg-accent px-3 text-xs font-medium text-content-inverse transition-colors hover:bg-accent-hover"
         title="Add item"
       >
