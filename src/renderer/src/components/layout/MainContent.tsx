@@ -1,6 +1,7 @@
 import { useItemsStore, useUIStore } from '../../stores'
 import { GridView } from '../grid/GridView'
 import { ListView } from '../list/ListView'
+import { TableView } from '../table/TableView'
 
 export function MainContent() {
   const items = useItemsStore((s) => s.items)
@@ -26,14 +27,10 @@ export function MainContent() {
     )
   }
 
-  // Spinner for remaining loading states (table view)
-  if (isLoading) {
+  if (isLoading && activeView === 'table') {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-edge border-t-accent" />
-          <p className="text-sm text-content-muted">Loading...</p>
-        </div>
+      <div className="flex-1 overflow-y-auto">
+        <TableView items={[]} isLoading={true} />
       </div>
     )
   }
@@ -75,12 +72,10 @@ export function MainContent() {
     )
   }
 
-  // Placeholder for Table view (Issue #1.10)
+  // Table view
   return (
-    <div className="flex-1 overflow-y-auto p-4">
-      <p className="text-sm text-content-muted">
-        {items.length} item{items.length !== 1 ? 's' : ''} &middot; Table view
-      </p>
+    <div className="flex-1 overflow-y-auto">
+      <TableView items={items} isLoading={false} />
     </div>
   )
 }
