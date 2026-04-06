@@ -96,10 +96,10 @@ src/
         │   │       ├── TableHeader.test.tsx    # Header sort + accessibility tests
         │   │       └── TableRow.test.tsx       # Row render + interaction tests
         │   ├── ui/
-        │   │   ├── StarRating.tsx     # Reusable 0–5 star rating display
+        │   │   ├── StarRating.tsx     # Reusable 0–5 star rating (read-only + interactive mode)
         │   │   ├── StatusBadge.tsx    # Color-coded status pill (Owned, Wishlist, etc.)
         │   │   └── __tests__/
-        │   │       ├── StarRating.test.tsx     # Star rating render tests
+        │   │       ├── StarRating.test.tsx     # Star rating render + interactive tests
         │   │       └── StatusBadge.test.tsx    # Status badge render tests
         │   └── layout/
         │       ├── AppShell.tsx       # Root layout: sidebar + main column
@@ -109,7 +109,11 @@ src/
         │       ├── ViewToggle.tsx     # Grid/list/table icon button group
         │       ├── SortDropdown.tsx   # Sort field + direction dropdown
         │       ├── MainContent.tsx    # Scrollable content host + grid/list/empty/loading states
-        │       └── Sidebar.module.css # Sidebar collapse/expand animation
+        │       ├── AddItemModal.tsx       # Add item modal dialog with dynamic form
+        │       ├── AddItemModal.module.css # Modal slide-up/fade animations
+        │       ├── Sidebar.module.css # Sidebar collapse/expand animation
+        │       └── __tests__/
+        │           └── AddItemModal.test.tsx   # Add item modal tests
         ├── lib/
         │   ├── trove-api.ts       # Typed renderer API wrapper (IPC client)
         │   ├── get-creator.ts     # Extract creator field from item metadata by media type
@@ -191,6 +195,7 @@ Phase 1: Foundation — app shell, browsing views, and theming.
 
 ### v0.0.3 (In Progress)
 
+- **1.11 Add Item Modal** (2026-04-05) — Modal dialog for adding new items with backdrop blur overlay and slide-up/slide-down CSS Module animations (`prefers-reduced-motion` supported), media type selector tabs (emoji + label, defaults to active filter or first type), dynamic form fields rendered from `fields_schema` (text, number, select, combobox-as-text), always-present common fields (Title required with inline validation, Status dropdown with 6 options defaulting to Owned, interactive `StarRating` picker, Notes textarea), form submission via Zustand `createItem` with automatic list/count refresh, inline error display on failure, `StarRating` component upgraded with optional interactive mode (`onChange` prop, hover preview, click-to-toggle, `role="radiogroup"` ARIA) while preserving backward compatibility for all existing read-only call sites, `addModalOpen` state in UI store, Escape/backdrop-click/close-button to close with exit animation state machine, body scroll lock while open
 - **1.10 Table View** (2026-04-05) — Full-width sortable data table browsing view with `TableView` container, `TableHeader` with clickable sortable column headers (asc/desc toggle, `aria-sort` attributes, `ArrowUp`/`ArrowDown` indicators from lucide-react), `TableRow` with type-aware cell rendering (`StatusBadge`, `StarRating`, `formatDate`, metadata text/number fields with em dash fallback for missing values), dynamic column generation from `fields_schema` when type filter is active (Type column shown in All Items mode), sort state synchronized with Zustand `sortConfig` and TopBar `SortDropdown`, semantic HTML `<table>` markup with `<thead>`/`<tbody>`/`<th scope="col">`/`<td>`, sticky header via `position: sticky`, horizontal scroll below 768px via `overflow-x: auto`, alternating row backgrounds, keyboard navigation with Enter/Space activation, `SkeletonTable` loading placeholder (10 rows with staggered animation), wired into `MainContent` view switching
 - **1.9 List View** (2026-04-05) — Compact list browsing view with `ListRow` component displaying cover thumbnail (48px), title, creator, color-coded `StatusBadge` pill, star rating, and formatted date in a CSS Grid row layout, `ListView` container with divider lines and alternating row backgrounds, `StatusBadge` reusable component with 6 status color mappings (Owned/neutral, Wishlist/accent-filled, Borrowed/info, Lent Out/warning, Completed/success, In Progress/accent-tinted), `SkeletonRow` loading placeholders (8 rows), `formatDate` utility via `Intl.DateTimeFormat`, `CoverImage` extended with `size` prop, `ProceduralCover` extended with `xs` size (48x48), keyboard navigation with Enter/Space activation, hover highlight and selection ring state, wired into `MainContent` view switching
 - **1.8 Grid View** (2026-04-04) — Responsive CSS grid browsing view with `auto-fill`/`minmax()` layout, `ItemCard` component with cover art (real or procedural), title, creator subtitle, and star rating, `StarRating` reusable component, `CoverImage` with ProceduralCover fallback, skeleton loading grid (12 cards), keyboard navigation with Enter/Space activation, hover lift animation with `prefers-reduced-motion` support, creator extraction from media type `fields_schema`, selection state wired to Zustand items store

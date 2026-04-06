@@ -4,6 +4,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { Sidebar } from './Sidebar'
 import { TopBar } from './TopBar'
 import { MainContent } from './MainContent'
+import { AddItemModal } from './AddItemModal'
 
 export function AppShell() {
   const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
@@ -29,6 +30,7 @@ export function AppShell() {
         <TopBar />
         <MainContent />
       </div>
+      <AddItemModal />
     </div>
   )
 }
