@@ -111,16 +111,21 @@ src/
         │       ├── MainContent.tsx    # Scrollable content host + grid/list/empty/loading states
         │       ├── AddItemModal.tsx       # Add item modal dialog with dynamic form
         │       ├── AddItemModal.module.css # Modal slide-up/fade animations
+        │       ├── ItemDetailPanel.tsx    # Slide-over item detail panel with inline editing and delete confirm
+        │       ├── ItemDetailPanel.module.css # Slide-in-from-right animations
         │       ├── Sidebar.module.css # Sidebar collapse/expand animation
         │       └── __tests__/
-        │           └── AddItemModal.test.tsx   # Add item modal tests
+        │           ├── AddItemModal.test.tsx   # Add item modal tests
+        │           └── ItemDetailPanel.test.tsx # Item detail panel tests
         ├── lib/
         │   ├── trove-api.ts       # Typed renderer API wrapper (IPC client)
         │   ├── get-creator.ts     # Extract creator field from item metadata by media type
         │   ├── format-date.ts     # Date formatting utility (Intl.DateTimeFormat)
+        │   ├── focus-trap.ts      # Focus trap helper for modal/panel components
         │   └── __tests__/
         │       ├── get-creator.test.ts  # Creator extraction tests
-        │       └── format-date.test.ts  # Date formatting tests
+        │       ├── format-date.test.ts  # Date formatting tests
+        │       └── focus-trap.test.ts   # Focus trap helper tests
         └── stores/
             ├── index.ts           # Barrel export for all stores + subscriptions
             ├── items-store.ts     # Items CRUD state + item counts + actions
@@ -193,7 +198,11 @@ npm run test:coverage  # Vitest with coverage
 
 Phase 1: Foundation — app shell, browsing views, and theming.
 
-### v0.0.3 (In Progress)
+### v0.0.4 (In Progress)
+
+- **1.12 Item Detail Panel** (2026-04-11) — Slide-over panel from the right edge for viewing and editing items. Opens on click from grid/list/table views via new `detailPanelOpen` UI store slice. Large cover art (new `lg` size on `CoverImage` / `ProceduralCover`), Syne-font title, media type label, all `fields_schema` metadata as read-only key/value rows, formatted date_added / date_modified. Inline editing for Status (select, auto-save), Rating (interactive `StarRating`, auto-save), and Notes (textarea, save-on-blur with no-op guard and in-flight lock). Delete action with inline collapse-in confirmation strip (no nested dialog) wired to existing `trove:items:delete` IPC (already cleans up cover files). Prev/next item navigation via header arrow buttons and Left/Right arrow keys, walking the current `items[]` in sort order. Close via X button, Escape, or backdrop click; respects `prefers-reduced-motion`; full focus trap and focus restoration via new `lib/focus-trap.ts` helper. CSS Module animation: 300ms slide-in from right with cubic-bezier easing. Mounted from `AppShell` alongside `AddItemModal`.
+
+### v0.0.3
 
 - **1.11 Add Item Modal** (2026-04-05) — Modal dialog for adding new items with backdrop blur overlay and slide-up/slide-down CSS Module animations (`prefers-reduced-motion` supported), media type selector tabs (emoji + label, defaults to active filter or first type), dynamic form fields rendered from `fields_schema` (text, number, select, combobox-as-text), always-present common fields (Title required with inline validation, Status dropdown with 6 options defaulting to Owned, interactive `StarRating` picker, Notes textarea), form submission via Zustand `createItem` with automatic list/count refresh, inline error display on failure, `StarRating` component upgraded with optional interactive mode (`onChange` prop, hover preview, click-to-toggle, `role="radiogroup"` ARIA) while preserving backward compatibility for all existing read-only call sites, `addModalOpen` state in UI store, Escape/backdrop-click/close-button to close with exit animation state machine, body scroll lock while open
 - **1.10 Table View** (2026-04-05) — Full-width sortable data table browsing view with `TableView` container, `TableHeader` with clickable sortable column headers (asc/desc toggle, `aria-sort` attributes, `ArrowUp`/`ArrowDown` indicators from lucide-react), `TableRow` with type-aware cell rendering (`StatusBadge`, `StarRating`, `formatDate`, metadata text/number fields with em dash fallback for missing values), dynamic column generation from `fields_schema` when type filter is active (Type column shown in All Items mode), sort state synchronized with Zustand `sortConfig` and TopBar `SortDropdown`, semantic HTML `<table>` markup with `<thead>`/`<tbody>`/`<th scope="col">`/`<td>`, sticky header via `position: sticky`, horizontal scroll below 768px via `overflow-x: auto`, alternating row backgrounds, keyboard navigation with Enter/Space activation, `SkeletonTable` loading placeholder (10 rows with staggered animation), wired into `MainContent` view switching

@@ -5,7 +5,7 @@ import { ProceduralCover } from '../covers'
 
 export interface CoverImageProps {
   item: Item
-  size?: 'xs' | 'sm' | 'md'
+  size?: 'xs' | 'sm' | 'md' | 'lg'
 }
 
 export const CoverImage = memo(function CoverImage({ item, size = 'md' }: CoverImageProps): ReactElement {

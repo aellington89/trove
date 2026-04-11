@@ -13,6 +13,7 @@ interface UIState {
   sortConfig: SortConfig
   sidebarCollapsed: boolean
   addModalOpen: boolean
+  detailPanelOpen: boolean
 }
 
 interface UIActions {
@@ -22,6 +23,7 @@ interface UIActions {
   setSortConfig: (config: SortConfig) => void
   toggleSidebar: () => void
   setAddModalOpen: (open: boolean) => void
+  setDetailPanelOpen: (open: boolean) => void
   _reset: () => void
 }
 
@@ -32,6 +34,7 @@ const initialState: UIState = {
   sortConfig: { field: 'date_added', direction: 'desc' },
   sidebarCollapsed: false,
   addModalOpen: false,
+  detailPanelOpen: false,
 }
 
 export const useUIStore = create<UIState & UIActions>()(
@@ -44,6 +47,7 @@ export const useUIStore = create<UIState & UIActions>()(
       setSortConfig: (config) => set({ sortConfig: config }),
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
       setAddModalOpen: (open) => set({ addModalOpen: open }),
+      setDetailPanelOpen: (open) => set({ detailPanelOpen: open }),
       _reset: () => set(initialState),
     })),
     { name: 'UIStore' },

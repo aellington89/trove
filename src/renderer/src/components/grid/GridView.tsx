@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import type { ReactElement } from 'react'
 import type { Item } from '../../../../shared/types'
-import { useItemsStore } from '../../stores'
+import { useItemsStore, useUIStore } from '../../stores'
 import { ItemCard } from './ItemCard'
 import { SkeletonCard } from './SkeletonCard'
 
@@ -15,12 +15,16 @@ const SKELETON_COUNT = 12
 export function GridView({ items, isLoading }: GridViewProps): ReactElement {
   const selectedItem = useItemsStore((s) => s.selectedItem)
   const fetchItem = useItemsStore((s) => s.fetchItem)
+  const setDetailPanelOpen = useUIStore((s) => s.setDetailPanelOpen)
 
   const handleCardClick = useCallback(
-    (id: string) => {
-      fetchItem(id)
+    async (id: string) => {
+      await fetchItem(id)
+      if (!useItemsStore.getState().error) {
+        setDetailPanelOpen(true)
+      }
     },
-    [fetchItem]
+    [fetchItem, setDetailPanelOpen]
   )
 
   if (isLoading) {

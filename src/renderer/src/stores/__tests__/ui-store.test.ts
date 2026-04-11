@@ -15,6 +15,7 @@ describe('UI Store', () => {
       expect(state.sortConfig).toEqual({ field: 'date_added', direction: 'desc' })
       expect(state.sidebarCollapsed).toBe(false)
       expect(state.addModalOpen).toBe(false)
+      expect(state.detailPanelOpen).toBe(false)
     })
   })
 
@@ -28,6 +29,19 @@ describe('UI Store', () => {
       useUIStore.getState().setAddModalOpen(true)
       useUIStore.getState().setAddModalOpen(false)
       expect(useUIStore.getState().addModalOpen).toBe(false)
+    })
+  })
+
+  describe('setDetailPanelOpen', () => {
+    it('opens the detail panel', () => {
+      useUIStore.getState().setDetailPanelOpen(true)
+      expect(useUIStore.getState().detailPanelOpen).toBe(true)
+    })
+
+    it('closes the detail panel', () => {
+      useUIStore.getState().setDetailPanelOpen(true)
+      useUIStore.getState().setDetailPanelOpen(false)
+      expect(useUIStore.getState().detailPanelOpen).toBe(false)
     })
   })
 
@@ -87,6 +101,7 @@ describe('UI Store', () => {
       useUIStore.getState().setSortConfig({ field: 'title', direction: 'asc' })
       useUIStore.getState().toggleSidebar()
       useUIStore.getState().setAddModalOpen(true)
+      useUIStore.getState().setDetailPanelOpen(true)
 
       useUIStore.getState()._reset()
 
@@ -97,6 +112,7 @@ describe('UI Store', () => {
       expect(state.sortConfig).toEqual({ field: 'date_added', direction: 'desc' })
       expect(state.sidebarCollapsed).toBe(false)
       expect(state.addModalOpen).toBe(false)
+      expect(state.detailPanelOpen).toBe(false)
     })
   })
 })
