@@ -5,6 +5,7 @@ import { Sidebar } from './Sidebar'
 import { TopBar } from './TopBar'
 import { MainContent } from './MainContent'
 import { AddItemModal } from './AddItemModal'
+import { ItemDetailPanel } from './ItemDetailPanel'
 
 export function AppShell() {
   const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
@@ -31,6 +32,7 @@ export function AppShell() {
         <MainContent />
       </div>
       <AddItemModal />
+      <ItemDetailPanel />
     </div>
   )
 }

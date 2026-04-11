@@ -58,6 +58,7 @@ export function TableView({ items, isLoading }: TableViewProps): ReactElement {
   const sortConfig = useUIStore((s) => s.sortConfig)
   const setSortConfig = useUIStore((s) => s.setSortConfig)
   const activeTypeFilter = useUIStore((s) => s.activeTypeFilter)
+  const setDetailPanelOpen = useUIStore((s) => s.setDetailPanelOpen)
   const selectedItem = useItemsStore((s) => s.selectedItem)
   const fetchItem = useItemsStore((s) => s.fetchItem)
   const getMediaType = useMediaTypesStore((s) => s.getMediaType)
@@ -91,10 +92,13 @@ export function TableView({ items, isLoading }: TableViewProps): ReactElement {
   )
 
   const handleRowClick = useCallback(
-    (id: string) => {
-      fetchItem(id)
+    async (id: string) => {
+      await fetchItem(id)
+      if (!useItemsStore.getState().error) {
+        setDetailPanelOpen(true)
+      }
     },
-    [fetchItem],
+    [fetchItem, setDetailPanelOpen],
   )
 
   if (isLoading) {
