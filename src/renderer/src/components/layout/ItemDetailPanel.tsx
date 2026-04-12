@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactElement } from 'react'
-import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Pencil, Trash2, X } from 'lucide-react'
 import { useItemsStore, useMediaTypesStore, useUIStore } from '../../stores'
 import { StarRating } from '../ui/StarRating'
 import { CoverImage } from '../grid/CoverImage'
@@ -19,6 +19,9 @@ const STATUS_OPTIONS = [
   'In Progress',
 ] as const
 
+const INPUT_CLASS =
+  'h-8 w-full rounded-lg border border-edge bg-surface-tertiary px-3 text-sm text-content-primary placeholder:text-content-muted focus:border-accent focus:outline-none'
+
 export function ItemDetailPanel(): ReactElement | null {
   const detailPanelOpen = useUIStore((s) => s.detailPanelOpen)
   const setDetailPanelOpen = useUIStore((s) => s.setDetailPanelOpen)
@@ -32,6 +35,14 @@ export function ItemDetailPanel(): ReactElement | null {
   )
 
   const [isClosing, setIsClosing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [titleDraft, setTitleDraft] = useState(() => selectedItem?.title ?? '')
+  const [titleError, setTitleError] = useState<string | null>(null)
+  const [metadataDraft, setMetadataDraft] = useState<Record<string, unknown>>(
+    () => selectedItem?.metadata ?? {},
+  )
   const [notesDraft, setNotesDraft] = useState(() => selectedItem?.notes ?? '')
   const [ratingDraft, setRatingDraft] = useState(() => selectedItem?.rating ?? 0)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
@@ -47,6 +58,11 @@ export function ItemDetailPanel(): ReactElement | null {
   const selectedId = selectedItem?.id ?? null
   useEffect(() => {
     if (selectedItem && lastSyncedIdRef.current !== selectedItem.id) {
+      setIsEditing(false)
+      setSaveError(null)
+      setTitleDraft(selectedItem.title)
+      setTitleError(null)
+      setMetadataDraft(selectedItem.metadata)
       setNotesDraft(selectedItem.notes ?? '')
       setRatingDraft(selectedItem.rating)
       setConfirmingDelete(false)
@@ -105,12 +121,23 @@ export function ItemDetailPanel(): ReactElement | null {
     if (canNext) fetchItem(items[currentIndex + 1].id)
   }, [canNext, currentIndex, fetchItem, items])
 
+  const handleCancelEdit = useCallback(() => {
+    if (!selectedItem) return
+    setIsEditing(false)
+    setTitleDraft(selectedItem.title)
+    setTitleError(null)
+    setMetadataDraft(selectedItem.metadata)
+    setSaveError(null)
+  }, [selectedItem])
+
   // Keyboard handlers (Escape, Tab trap, Arrow nav)
   useEffect(() => {
     if (!detailPanelOpen) return undefined
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        if (confirmingDelete) {
+        if (isEditing) {
+          handleCancelEdit()
+        } else if (confirmingDelete) {
           setConfirmingDelete(false)
         } else {
           handleClose()
@@ -129,7 +156,7 @@ export function ItemDetailPanel(): ReactElement | null {
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [detailPanelOpen, confirmingDelete, handleClose, navigatePrev, navigateNext])
+  }, [detailPanelOpen, isEditing, confirmingDelete, handleClose, handleCancelEdit, navigatePrev, navigateNext])
 
   function handleAnimationEnd(e: React.AnimationEvent) {
     if (isClosing && e.target === e.currentTarget) {
@@ -186,6 +213,31 @@ export function ItemDetailPanel(): ReactElement | null {
       setNotesError(err instanceof Error ? err.message : 'Failed to save notes')
     } finally {
       setIsSavingNotes(false)
+    }
+  }
+
+  function handleEditClick() {
+    setIsEditing(true)
+    setSaveError(null)
+    setTitleError(null)
+  }
+
+  async function handleSave() {
+    if (!selectedItem || isSaving) return
+    const trimmed = titleDraft.trim()
+    if (!trimmed) {
+      setTitleError('Title cannot be empty')
+      return
+    }
+    setIsSaving(true)
+    setSaveError(null)
+    try {
+      await updateItem(selectedItem.id, { title: trimmed, metadata: metadataDraft })
+      setIsEditing(false)
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save changes')
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -277,12 +329,31 @@ export function ItemDetailPanel(): ReactElement | null {
                 <span>{mediaType.label}</span>
               </p>
             )}
-            <h2
-              id="detail-title"
-              className="font-heading text-2xl font-semibold text-content-primary"
-            >
-              {selectedItem.title}
-            </h2>
+            {isEditing ? (
+              <div>
+                <input
+                  id="detail-title"
+                  type="text"
+                  value={titleDraft}
+                  onChange={(e) => {
+                    setTitleDraft(e.target.value)
+                    if (titleError) setTitleError(null)
+                  }}
+                  className={`w-full bg-transparent text-center font-heading text-2xl font-semibold text-content-primary focus:outline-none focus:ring-1 focus:ring-accent/50 rounded${titleError ? ' ring-1 ring-red-500' : ''}`}
+                  aria-label="Item title"
+                />
+                {titleError && (
+                  <p className="mt-1 text-center text-xs text-red-500">{titleError}</p>
+                )}
+              </div>
+            ) : (
+              <h2
+                id="detail-title"
+                className="font-heading text-2xl font-semibold text-content-primary"
+              >
+                {selectedItem.title}
+              </h2>
+            )}
             {creator && <p className="mt-1 text-sm text-content-muted">{creator}</p>}
           </div>
 
@@ -314,21 +385,47 @@ export function ItemDetailPanel(): ReactElement | null {
             </div>
           </div>
 
-          {/* Type-specific metadata (read-only) */}
+          {/* Type-specific metadata */}
           {fieldsSchema.length > 0 && (
             <div className="mb-4">
-              <p className="mb-2 text-xs font-medium text-content-muted">
-                {mediaType?.label} Details
-              </p>
-              <dl className="space-y-1.5">
-                {fieldsSchema.map((field) => (
-                  <DetailField
-                    key={field.key}
-                    field={field}
-                    value={selectedItem.metadata[field.key]}
-                  />
-                ))}
-              </dl>
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-xs font-medium text-content-muted">{mediaType?.label} Details</p>
+                {!isEditing && (
+                  <button
+                    type="button"
+                    onClick={handleEditClick}
+                    className="flex items-center gap-1 text-xs font-medium text-content-muted transition-colors hover:text-content-primary"
+                    aria-label="Edit item details"
+                  >
+                    <Pencil className="h-3 w-3" />
+                    Edit
+                  </button>
+                )}
+              </div>
+              {isEditing ? (
+                <div className="space-y-2">
+                  {fieldsSchema.map((field) => (
+                    <EditableDetailField
+                      key={field.key}
+                      field={field}
+                      value={metadataDraft[field.key]}
+                      onChange={(value) =>
+                        setMetadataDraft((prev) => ({ ...prev, [field.key]: value }))
+                      }
+                    />
+                  ))}
+                </div>
+              ) : (
+                <dl className="space-y-1.5">
+                  {fieldsSchema.map((field) => (
+                    <DetailField
+                      key={field.key}
+                      field={field}
+                      value={selectedItem.metadata[field.key]}
+                    />
+                  ))}
+                </dl>
+              )}
             </div>
           )}
 
@@ -370,7 +467,32 @@ export function ItemDetailPanel(): ReactElement | null {
 
         {/* Footer */}
         <div className="border-t border-edge px-5 py-3.5">
-          {confirmingDelete ? (
+          {isEditing ? (
+            <div className="flex items-center justify-between gap-2">
+              {saveError ? (
+                <p className="text-xs text-red-500">{saveError}</p>
+              ) : (
+                <span />
+              )}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="h-8 rounded-lg px-3 text-sm font-medium text-content-muted transition-colors hover:text-content-primary"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="flex h-8 items-center rounded-lg bg-accent px-4 text-sm font-medium text-content-inverse transition-colors hover:bg-accent-hover disabled:opacity-50"
+                >
+                  {isSaving ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          ) : confirmingDelete ? (
             <div className="flex items-center justify-between gap-2">
               <p className="text-xs text-content-secondary">Delete this item?</p>
               <div className="flex gap-2">
@@ -420,6 +542,76 @@ function DetailField({
     <div className="grid grid-cols-[120px_1fr] gap-2 text-sm">
       <dt className="text-content-secondary">{field.label}</dt>
       <dd className="text-content-primary">{display}</dd>
+    </div>
+  )
+}
+
+function EditableDetailField({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldDefinition
+  value: unknown
+  onChange: (value: string) => void
+}): ReactElement {
+  const id = `detail-field-${field.key}`
+  const strValue = String(value ?? '')
+
+  if (field.type === 'select' && field.options) {
+    return (
+      <div>
+        <label htmlFor={id} className="mb-1 block text-xs font-medium text-content-secondary">
+          {field.label}
+        </label>
+        <select
+          id={id}
+          value={strValue}
+          onChange={(e) => onChange(e.target.value)}
+          className={INPUT_CLASS}
+        >
+          <option value="">Select...</option>
+          {field.options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      </div>
+    )
+  }
+
+  if (field.type === 'number') {
+    return (
+      <div>
+        <label htmlFor={id} className="mb-1 block text-xs font-medium text-content-secondary">
+          {field.label}
+        </label>
+        <input
+          id={id}
+          type="number"
+          value={strValue}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.label}
+          className={INPUT_CLASS}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <label htmlFor={id} className="mb-1 block text-xs font-medium text-content-secondary">
+        {field.label}
+      </label>
+      <input
+        id={id}
+        type="text"
+        value={strValue}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={field.label}
+        className={INPUT_CLASS}
+      />
     </div>
   )
 }
