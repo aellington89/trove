@@ -55,6 +55,7 @@ vi.mock('../ItemDetailPanel.module.css', () => ({
 let mockDetailPanelOpen = true
 let mockSelectedItem: Item | null = baseItem
 const mockItems: Item[] = itemList
+let mockGetMediaType: (key: string) => MediaType | undefined = () => mockMediaType
 
 vi.mock('../../../stores', () => ({
   useUIStore: (selector: (s: Record<string, unknown>) => unknown) =>
@@ -78,7 +79,9 @@ vi.mock('../../../stores', () => ({
     }),
   useMediaTypesStore: (selector: (s: Record<string, unknown>) => unknown) =>
     selector({
-      getMediaType: () => mockMediaType,
+      get getMediaType() {
+        return mockGetMediaType
+      },
     }),
 }))
 
@@ -230,5 +233,61 @@ describe('ItemDetailPanel', () => {
     const html = render()
     expect(html).toContain('role="img"')
     expect(html).toContain('Cover art for The Hobbit')
+  })
+
+  describe('view mode (isEditing = false by default)', () => {
+    it('renders title as an h2 element, not an input', () => {
+      const html = render()
+      const titleIdx = html.indexOf('id="detail-title"')
+      expect(titleIdx).toBeGreaterThan(-1)
+      // Walk back to the opening tag and confirm it is <h2
+      const tagStart = html.lastIndexOf('<', titleIdx)
+      expect(html.slice(tagStart, tagStart + 3)).toBe('<h2')
+    })
+
+    it('renders metadata fields as read-only dt/dd pairs, not inputs', () => {
+      const html = render()
+      expect(html).toContain('<dt')
+      expect(html).toContain('<dd')
+      expect(html).not.toContain('id="detail-field-author"')
+      expect(html).not.toContain('id="detail-field-genre"')
+      expect(html).not.toContain('id="detail-field-pages"')
+    })
+
+    it('renders the Edit button next to the media type Details header', () => {
+      const html = render()
+      expect(html).toContain('aria-label="Edit item details"')
+      // Both the section label and the Edit button should be inside the same
+      // narrow region of markup — confirm they're within 400 chars of each other
+      const detailsIdx = html.indexOf('Books Details')
+      const editIdx = html.indexOf('aria-label="Edit item details"')
+      expect(Math.abs(detailsIdx - editIdx)).toBeLessThan(400)
+    })
+
+    it('does not render Edit button when the media type has no fields_schema', () => {
+      mockGetMediaType = () => ({ ...mockMediaType, fields_schema: [] })
+      const html = render()
+      expect(html).not.toContain('aria-label="Edit item details"')
+      mockGetMediaType = () => mockMediaType
+    })
+
+    it('renders Delete button in footer, not Save/Cancel', () => {
+      const html = render()
+      expect(html).toContain('aria-label="Delete item"')
+      expect(html).not.toContain('Saving...')
+      // Save button text is not present in view mode
+      const saveCount = (html.match(/>Save</g) ?? []).length
+      expect(saveCount).toBe(0)
+    })
+
+    it('does not render Edit button in the panel header', () => {
+      const html = render()
+      // The header is the first border-b section; the Edit button lives in the body
+      // Verify the header (before the scrollable body) has no Edit button
+      const bodyStart = html.indexOf('overflow-y-auto')
+      const editIdx = html.indexOf('aria-label="Edit item details"')
+      // Edit button index must be after the scrollable body begins
+      expect(editIdx).toBeGreaterThan(bodyStart)
+    })
   })
 })
